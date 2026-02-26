@@ -1,0 +1,49 @@
+from models.user import User
+import argparse
+from tabulate import tabulate
+
+#main function
+class CLI:
+    def __init__(self):
+        User.read_from_file()
+        self.parser = argparse.ArgumentParser(description="Project Manager CLI")
+        subparsers = self.parser.add_subparsers(dest="command")
+        
+        #add-user command
+        user_parser = subparsers.add_parser("add-user")
+        user_parser.add_argument('--name', required=True, help="Name of user")
+        user_parser.add_argument('--email', required=True, help="Email address of user")
+        user_parser.set_defaults(func=User)
+        #list command
+        subparsers.add_parser("list-users")
+        
+    def start(self):
+        args = self.parser.parse_args()
+        
+        if hasattr(args, "func"):
+            User(name=args.name, email=args.email)
+            User.save_users_to_file()
+            print(f"User {args.name} created")
+            
+        elif args.command == 'list-users':
+            if not User.users:
+                print("No users found.")
+                return
+            
+            print("\n--- Current Users ---")
+            table_data = []
+            for person in User.users:
+                table_data.append([person.name, person.email])
+            print(tabulate(table_data, headers=["Name", "Email"], tablefmt="grid"))
+                
+        elif args.command is None:
+            self.parser.print_help()
+    
+
+def main():
+    app = CLI()
+    app.start()          
+              
+              
+if __name__ == "__main__":
+    main()
