@@ -1,5 +1,5 @@
 import json
-import os
+from utils.storage_handler import save_to_file, load_from_file
 
 class User:
     users = []
@@ -17,15 +17,16 @@ class User:
     
     @classmethod
     def read_from_file(cls):
-        #check if the file exists
-        if not os.path.exists(cls.users_data):
-            return
         try:
-            with open(cls.users_data, "r")as file:
-                data = json.load(file)
-                cls.users = []
-                for user in data:
-                    User(name = user['name'], email = user['email'])
+        
+            data = load_from_file(cls.users_data)
+            cls.users = []
+                
+            if data is None:
+                print("No user data found. Starting with an empty list.")
+                return
+            for user in data:
+                cls(name = user['name'], email = user['email'])
         except FileNotFoundError:
             print("Data file not found")
             cls.users = []
@@ -38,12 +39,12 @@ class User:
     @classmethod
     def save_users_to_file(cls):
         try:
+            save_to_file(cls.users, cls.users_data)
             users_saved = []
             for user in cls.users:
                 users_saved.append({"name": user.name,
                                     "email": user.email})
-            with open(cls.users_data, "w")as file:
-                json.dump(users_saved, file, indent=4)
+            print(f"✅ User saved to {cls.users_data}")
         except PermissionError:
             print(f"Error: Permission denied when writing to {cls.users_data}")
         except OSError as e:
