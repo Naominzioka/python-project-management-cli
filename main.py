@@ -11,8 +11,8 @@ class CLI:
         
         #add-user command
         user_parser = subparsers.add_parser("add-user")
-        user_parser.add_argument('--name', required=True, help="Name of user")
-        user_parser.add_argument('--email', required=True, help="Email address of user")
+        user_parser.add_argument('name', help="Name of user")
+        user_parser.add_argument('email', help="Email address of user")
         user_parser.set_defaults(func=User)
         #list command
         subparsers.add_parser("list-users")
