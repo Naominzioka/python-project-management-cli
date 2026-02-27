@@ -1,4 +1,5 @@
 from models.user import User
+from models.project import Project
 import argparse
 from tabulate import tabulate
 
@@ -17,10 +18,17 @@ class CLI:
         #list command
         subparsers.add_parser("list-users")
         
+        #project commands
+        project_parser = subparsers.add_parser("add-project")
+        project_parser.add_argument('title', help="Name of project")
+        project_parser.add_argument('description', help="Description of project")
+        project_parser.add_argument('due_date', help="Due date of project")
+        project_parser.set_defaults(func=Project)
+        
     def start(self):
         args = self.parser.parse_args()
         
-        if hasattr(args, "func"):
+        if args.command == 'add-user':
             User(name=args.name, email=args.email)
             User.save_users_to_file()
             print(f"User {args.name} created")
@@ -35,6 +43,10 @@ class CLI:
             for person in User.users:
                 table_data.append([person.name, person.email])
             print(tabulate(table_data, headers=["Name", "Email"], tablefmt="grid"))
+            
+        elif args.command == 'add-project':
+            Project(title=args.title, description=args.description, due_date=args.due_date)
+            print(f"Project {args.title} created")
                 
         elif args.command is None:
             self.parser.print_help()
