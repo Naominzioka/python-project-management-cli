@@ -11,7 +11,8 @@ class Project:
         self.title = title
         self.description = description
         self.owner_email = owner_email
-        self._due_date = due_date
+        # use the property setter to validate/normalize the due date
+        self.due_date = due_date
         
         #if no id is provided, assign one using the class-level id counter. 
         # This ensures that each project has a unique id, even if some projects are deleted in the future.
