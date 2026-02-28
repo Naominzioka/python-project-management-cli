@@ -11,8 +11,7 @@ class Project:
         self.title = title
         self.description = description
         self.owner_email = owner_email
-        #handling error in the setter method for due date
-        self.due_date = due_date
+        self._due_date = due_date
         
         #if no id is provided, assign one using the class-level id counter. 
         # This ensures that each project has a unique id, even if some projects are deleted in the future.
@@ -34,7 +33,8 @@ class Project:
         return self._due_date
     
     #setter to validate date format.
-    #TBD is a default value (to be determined) it sets a default date if the provided date is invalid, allowing the project to be created without a valid due date.
+    #TBD is a default value (to be determined) it sets a default date if the provided date is invalid, 
+    # allowing the project to be created without a valid due date.
     @due_date.setter
     def due_date(self, value):
         try:
@@ -49,13 +49,14 @@ class Project:
     def read_from_file(cls):
         data = load_from_file(cls.projects_data)
         cls.projects = []
+        #reste id counter to 1 when we read from file to avoid id conflicts when creating new projects.
         Project.id_counter = 1
             
         if data is None:
             return
         
         for project in data:
-            cls(
+             cls(
                 id = project.get('id'),
                 title = project.get('title'), 
                 description = project.get('description'), 
@@ -63,7 +64,7 @@ class Project:
                 owner_email = project.get('owner_email')
             )
             
-    
+            
     #saves project instances to json file
     @classmethod
     def save_projects_to_file(cls):
@@ -72,8 +73,6 @@ class Project:
         except Exception as e:
             print(f"An error occurred while saving projects: {e}")
         
-    
-    
     #converts project instance to a dictionary for better readability in the JSON file.
     def to_dict(self):
         return {
