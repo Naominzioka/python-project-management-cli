@@ -1,19 +1,29 @@
 import json, os
+from models.person import Person
 from utils.storage_handler import save_to_file, load_from_file
 
-class User:
+class User(Person):
     users = []
     users_data = "data/users.json"
     
     def __init__(self, name, email):
-        self.name = name
-        self.email = email
+        #inherits name and email from person class
+        super().__init__(name, email)
         
         User.users.append(self)
+        
+    def to_dict(self):
+        #inherits name and email from person class and returns them in a dictionary format for saving to json file
+        return {
+            "name": self.name,
+            "email": self.email
+        }
 
-    #to ensure clean output
+        #to ensure clean output
     def __str__(self):
         return f"User: '{self.name}', | Email: '{self.email}'"
+    
+
     
     @classmethod
     def read_from_file(cls):
@@ -60,4 +70,3 @@ class User:
             #for any other unexpected bugs
             print(f"❌ An unexpected error occurred: {e}")
             
-       
