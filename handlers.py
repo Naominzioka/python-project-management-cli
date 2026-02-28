@@ -24,7 +24,11 @@ def list_users(args):
     print(tabulate(table_data, headers=["Name", "Email"], tablefmt="grid"))
     
 def handle_add_project(args):
-    user_exists = any(user.email == args.owner_email for user in User.users)
+    user_exists = False
+    for user in User.users:
+        if user.email == args.owner_email:
+            user_exists = True
+            break # if we find a user with the matching email, we can stop searching through the list of users.
     if not user_exists:
         print(f"Error: No user with email {args.owner_email} found.")
         return
@@ -46,7 +50,12 @@ def handle_list_projects(args):
     print(tabulate(table_data, headers=["ID", "Title", "Description", "Due Date"], tablefmt="grid"))
     
 def handle_delete_project(args):
-    project_to_delete = next((project for project in Project.projects if project.id == args.project_id), None)
+    project_to_delete = None
+    for project in Project.projects:
+        if project.id == args.project_id:
+            project_to_delete = project
+            break  #if we find the project, we can stop searching through the list of projects.
+    
     if not project_to_delete:
         print(f"Error: No project with ID {args.project_id} found.")
         return
@@ -56,12 +65,21 @@ def handle_delete_project(args):
     print(f"Project with ID {args.project_id} deleted successfully.")
     
 def handle_add_task(args):
-    find_project = any(project.id == args.project_id for project in Project.projects)
+    
+    find_project = False
+    for project in Project.projects:
+        if project.id == args.project_id:
+            find_project = True
+            break # if we find a project with the matching id, we can stop searching through the list of projects.
     if not find_project:
         print(f"Error: Project with ID {args.project_id} not found.")
         return
     
-    find_user = any(user.email == args.assigned_to for user in User.users)
+    find_user = False
+    for user in User.users:
+        if user.email == args.assigned_to:
+            find_user = True
+            break # if we find a user with the matching email, we can stop searching through the list of users.
     if not find_user:
         print(f"Error: User with email {args.assigned_to} not found.")
         return
@@ -71,7 +89,11 @@ def handle_add_task(args):
     
 
 def handle_completed_task(args):
-    task_to_complete = next((task for task in Task.tasks if task.id == args.task_id), None) 
+    task_to_complete = None
+    for task in Task.tasks:
+        if task.id == args.task_id:
+            task_to_complete = task
+            break  #if we find the task, we can stop searching through the list of tasks.
     
     if not task_to_complete:
         print(f"❌ Error: No task found with ID {args.task_id}")

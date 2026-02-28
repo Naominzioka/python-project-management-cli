@@ -86,7 +86,12 @@ class Project:
 
     @classmethod
     def delete_project(cls, project_id):
-        project_to_delete = next((project for project in cls.projects if project.id == project_id), None)
+    
+        project_to_delete = None
+        for project in cls.projects:
+            if project.id == project_id:
+                project_to_delete = project
+                break  #if we find the project, we can stop searching through the list of projects.
         if project_to_delete:
             cls.projects.remove(project_to_delete)
             cls.save_projects_to_file()
